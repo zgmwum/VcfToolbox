@@ -19,16 +19,6 @@ import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.broadinstitute.variant.variantcontext.VariantContext;
-import org.broadinstitute.variant.variantcontext.VariantContextBuilder;
-import org.broadinstitute.variant.variantcontext.writer.Options;
-import org.broadinstitute.variant.variantcontext.writer.VariantContextWriter;
-import org.broadinstitute.variant.variantcontext.writer.VariantContextWriterFactory;
-import org.broadinstitute.variant.vcf.VCFHeader;
-import org.broadinstitute.variant.vcf.VCFHeaderLine;
-import org.broadinstitute.variant.vcf.VCFHeaderLineCount;
-import org.broadinstitute.variant.vcf.VCFHeaderLineType;
-import org.broadinstitute.variant.vcf.VCFInfoHeaderLine;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
@@ -37,6 +27,17 @@ import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.TreeMultimap;
+
+import htsjdk.variant.variantcontext.VariantContext;
+import htsjdk.variant.variantcontext.VariantContextBuilder;
+import htsjdk.variant.variantcontext.writer.Options;
+import htsjdk.variant.variantcontext.writer.VariantContextWriter;
+import htsjdk.variant.variantcontext.writer.VariantContextWriterFactory;
+import htsjdk.variant.vcf.VCFHeader;
+import htsjdk.variant.vcf.VCFHeaderLine;
+import htsjdk.variant.vcf.VCFHeaderLineCount;
+import htsjdk.variant.vcf.VCFHeaderLineType;
+import htsjdk.variant.vcf.VCFInfoHeaderLine;
 
 /**
  * Read multiple single sample trimmed, left aligned vcfs from stdin as text.
@@ -58,7 +59,8 @@ public class BuildFrequencySummaryFromMultipleVcfs {
             .getLogger(BuildFrequencySummaryFromMultipleVcfs.class);
 
     // @Parameter(names = "--sequence-dictionary-source", description =
-    // "Vcf input file (can be bgzipped); is used as a source of reference dictionary data",
+    // "Vcf input file (can be bgzipped); is used as a source of reference
+    // dictionary data",
     // required = true)
     // private String inputVcfFile;
     @Parameter(names = "--prefix", description = "Prefix of info entries", required = false)
@@ -110,10 +112,10 @@ public class BuildFrequencySummaryFromMultipleVcfs {
         // !ignoreInputIndex);
         // VCFHeader header = vcfFileReader.getFileHeader();
 
-        final EnumSet<Options> options = ignoreInputIndex ? EnumSet.of(Options.INDEX_ON_THE_FLY) : EnumSet
-                .noneOf(Options.class);
-        final VariantContextWriter vcfWriter = VariantContextWriterFactory.sortOnTheFly(
-                VariantContextWriterFactory.create(new File(outputVcfFile), null, options), 1000);
+        final EnumSet<Options> options = ignoreInputIndex ? EnumSet.of(Options.INDEX_ON_THE_FLY)
+                : EnumSet.noneOf(Options.class);
+        final VariantContextWriter vcfWriter = VariantContextWriterFactory
+                .sortOnTheFly(VariantContextWriterFactory.create(new File(outputVcfFile), null, options), 1000);
 
         Set<VCFHeaderLine> set = Collections.emptySet();
         List<String> list = Collections.emptyList();

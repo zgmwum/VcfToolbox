@@ -4,24 +4,24 @@ import java.io.File;
 import java.util.EnumSet;
 import java.util.Locale;
 
-import net.sf.samtools.util.CloseableIterator;
-
 import org.apache.commons.io.IOUtils;
-import org.broadinstitute.variant.variantcontext.Allele;
-import org.broadinstitute.variant.variantcontext.VariantContext;
-import org.broadinstitute.variant.variantcontext.VariantContextBuilder;
-import org.broadinstitute.variant.variantcontext.writer.Options;
-import org.broadinstitute.variant.variantcontext.writer.VariantContextWriter;
-import org.broadinstitute.variant.variantcontext.writer.VariantContextWriterFactory;
-import org.broadinstitute.variant.vcf.VCFFileReader;
-import org.broadinstitute.variant.vcf.VCFHeader;
-import org.broadinstitute.variant.vcf.VCFHeaderLineType;
-import org.broadinstitute.variant.vcf.VCFInfoHeaderLine;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.cloudinside.bio.VariantHashCounter;
 import com.google.common.base.Strings;
+
+import htsjdk.samtools.util.CloseableIterator;
+import htsjdk.variant.variantcontext.Allele;
+import htsjdk.variant.variantcontext.VariantContext;
+import htsjdk.variant.variantcontext.VariantContextBuilder;
+import htsjdk.variant.variantcontext.writer.Options;
+import htsjdk.variant.variantcontext.writer.VariantContextWriter;
+import htsjdk.variant.variantcontext.writer.VariantContextWriterFactory;
+import htsjdk.variant.vcf.VCFFileReader;
+import htsjdk.variant.vcf.VCFHeader;
+import htsjdk.variant.vcf.VCFHeaderLineType;
+import htsjdk.variant.vcf.VCFInfoHeaderLine;
 
 /**
  * Read no-sample vcf file
@@ -34,7 +34,8 @@ import com.google.common.base.Strings;
 public class AddZgmIdWithNormalization {
     private static final String ZGM_HASH_INFO_NAME = "ZgmHash";
 
-    private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(AddZgmIdWithNormalization.class);
+    private static final org.apache.log4j.Logger log = org.apache.log4j.Logger
+            .getLogger(AddZgmIdWithNormalization.class);
 
     @Parameter(names = "--input", description = "Vcf input file (can be bgzipped, may need to indexed through tabix)", required = true)
     private String inputVcfFile;
@@ -71,8 +72,8 @@ public class AddZgmIdWithNormalization {
         VCFHeader header = vcfFileReader.getFileHeader();
         CloseableIterator<VariantContext> it = vcfFileReader.iterator();
 
-        EnumSet<Options> options = ignoreInputIndex ? EnumSet.of(Options.INDEX_ON_THE_FLY) : EnumSet
-                .noneOf(Options.class);
+        EnumSet<Options> options = ignoreInputIndex ? EnumSet.of(Options.INDEX_ON_THE_FLY)
+                : EnumSet.noneOf(Options.class);
         if (ignoreMissingHeader)
             options.add(Options.ALLOW_MISSING_FIELDS_IN_HEADER);
 
@@ -91,10 +92,8 @@ public class AddZgmIdWithNormalization {
             for (Allele obs : vc.getAlternateAlleles()) {
                 VariantContextBuilder vcb = new VariantContextBuilder(vc);
 
-                vc.getCommonInfo().putAttribute(
-                        ZGM_HASH_INFO_NAME,
-                        VariantHashCounter.hash(vc.getChr(), vc.getStart(), vc.getEnd(), vc.getReference()
-                                .getBaseString(), vc.getAlternateAllele(0).getBaseString()));
+                vc.getCommonInfo().putAttribute(ZGM_HASH_INFO_NAME, VariantHashCounter.hash(vc.getChr(), vc.getStart(),
+                        vc.getEnd(), vc.getReference().getBaseString(), vc.getAlternateAllele(0).getBaseString()));
 
                 int position = vc.getStart();
                 String refSequence = oryginalReference.getBaseString();

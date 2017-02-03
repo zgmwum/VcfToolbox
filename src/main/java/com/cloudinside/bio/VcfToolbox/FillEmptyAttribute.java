@@ -5,19 +5,18 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Locale;
 
-import net.sf.samtools.util.CloseableIterator;
-
-import org.broadinstitute.variant.variantcontext.VariantContext;
-import org.broadinstitute.variant.variantcontext.VariantContextBuilder;
-import org.broadinstitute.variant.variantcontext.writer.Options;
-import org.broadinstitute.variant.variantcontext.writer.VariantContextWriter;
-import org.broadinstitute.variant.variantcontext.writer.VariantContextWriterFactory;
-import org.broadinstitute.variant.vcf.VCFFileReader;
-import org.broadinstitute.variant.vcf.VCFHeader;
-
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.google.common.base.Stopwatch;
+
+import htsjdk.samtools.util.CloseableIterator;
+import htsjdk.variant.variantcontext.VariantContext;
+import htsjdk.variant.variantcontext.VariantContextBuilder;
+import htsjdk.variant.variantcontext.writer.Options;
+import htsjdk.variant.variantcontext.writer.VariantContextWriter;
+import htsjdk.variant.variantcontext.writer.VariantContextWriterFactory;
+import htsjdk.variant.vcf.VCFFileReader;
+import htsjdk.variant.vcf.VCFHeader;
 
 /**
  * Finds variants in genes that are possibly damaging and appears twice (i.e.
@@ -87,7 +86,7 @@ public class FillEmptyAttribute {
             options.add(Options.ALLOW_MISSING_FIELDS_IN_HEADER);
 
         vcfWriter = // VariantContextWriterFactory.sortOnTheFly(
-        VariantContextWriterFactory.create(new File(outputVcfFile), header.getSequenceDictionary(), options);
+                VariantContextWriterFactory.create(new File(outputVcfFile), header.getSequenceDictionary(), options);
         // 10000);
 
         // build header

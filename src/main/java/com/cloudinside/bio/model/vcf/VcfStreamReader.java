@@ -12,8 +12,9 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.broadinstitute.variant.vcf.VCFHeader;
-import org.broadinstitute.variant.vcf.VCFHeaderLine;
+
+import htsjdk.variant.vcf.VCFHeader;
+import htsjdk.variant.vcf.VCFHeaderLine;
 
 public class VcfStreamReader implements Closeable {
     private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(VcfStreamReader.class);
@@ -99,8 +100,8 @@ public class VcfStreamReader implements Closeable {
 
     public static void main(String[] args) {
         try {
-            VcfStreamReader x = new VcfStreamReader(new BufferedReader(new FileReader(
-                    "/wum/pio/experiments/wes/Sample_1ROGOWIEC/Sample_1ROGOWIEC-hcp.va.filtered.vcf")));
+            VcfStreamReader x = new VcfStreamReader(new BufferedReader(
+                    new FileReader("/wum/pio/experiments/wes/Sample_1ROGOWIEC/Sample_1ROGOWIEC-hcp.va.filtered.vcf")));
 
             System.out.println(x.getVcfHeader());
             VcfLine line;

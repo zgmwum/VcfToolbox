@@ -6,23 +6,23 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
-import net.sf.samtools.util.CloseableIterator;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.broadinstitute.variant.variantcontext.VariantContext;
-import org.broadinstitute.variant.variantcontext.VariantContextBuilder;
-import org.broadinstitute.variant.variantcontext.writer.Options;
-import org.broadinstitute.variant.variantcontext.writer.VariantContextWriter;
-import org.broadinstitute.variant.variantcontext.writer.VariantContextWriterFactory;
-import org.broadinstitute.variant.vcf.VCFFileReader;
-import org.broadinstitute.variant.vcf.VCFHeader;
-import org.broadinstitute.variant.vcf.VCFHeaderLineType;
-import org.broadinstitute.variant.vcf.VCFInfoHeaderLine;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.google.common.base.Stopwatch;
+
+import htsjdk.samtools.util.CloseableIterator;
+import htsjdk.variant.variantcontext.VariantContext;
+import htsjdk.variant.variantcontext.VariantContextBuilder;
+import htsjdk.variant.variantcontext.writer.Options;
+import htsjdk.variant.variantcontext.writer.VariantContextWriter;
+import htsjdk.variant.variantcontext.writer.VariantContextWriterFactory;
+import htsjdk.variant.vcf.VCFFileReader;
+import htsjdk.variant.vcf.VCFHeader;
+import htsjdk.variant.vcf.VCFHeaderLineType;
+import htsjdk.variant.vcf.VCFInfoHeaderLine;
 
 /**
  * Finds variants in genes that are possibly damaging and appears twice (i.e.
@@ -89,7 +89,7 @@ public class RecessiveMarker {
         Set<String> transcriptWithImportantVariantSeenTwice = new HashSet<>();
 
         vcfWriter = // VariantContextWriterFactory.sortOnTheFly(
-        VariantContextWriterFactory.create(new File(outputVcfFile), header.getSequenceDictionary(), options);
+                VariantContextWriterFactory.create(new File(outputVcfFile), header.getSequenceDictionary(), options);
         // 10000);
 
         // build header

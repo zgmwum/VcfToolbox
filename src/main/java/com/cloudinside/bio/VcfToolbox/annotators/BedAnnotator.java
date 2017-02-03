@@ -12,11 +12,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.broadinstitute.variant.variantcontext.Allele;
-import org.broadinstitute.variant.variantcontext.VariantContext;
-import org.broadinstitute.variant.variantcontext.VariantContextBuilder;
-import org.broadinstitute.variant.vcf.VCFHeaderLineType;
-import org.broadinstitute.variant.vcf.VCFInfoHeaderLine;
 
 import com.cloudinside.bio.VcfToolbox.IAnnotator;
 import com.cloudinside.bio.model.vcf.VcfLine;
@@ -24,6 +19,12 @@ import com.cloudinside.bio.utils.RangeMultimap;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Range;
+
+import htsjdk.variant.variantcontext.Allele;
+import htsjdk.variant.variantcontext.VariantContext;
+import htsjdk.variant.variantcontext.VariantContextBuilder;
+import htsjdk.variant.vcf.VCFHeaderLineType;
+import htsjdk.variant.vcf.VCFInfoHeaderLine;
 
 public class BedAnnotator implements IAnnotator {
     private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(BedAnnotator.class);
@@ -126,7 +127,8 @@ public class BedAnnotator implements IAnnotator {
     public Collection<VCFInfoHeaderLine> getInfoHeaderLines() {
 
         Set<VCFInfoHeaderLine> lines = new HashSet<>();
-        VCFInfoHeaderLine newHeaderLine = new VCFInfoHeaderLine(columnName, 1, VCFHeaderLineType.Character, description);
+        VCFInfoHeaderLine newHeaderLine = new VCFInfoHeaderLine(columnName, 1, VCFHeaderLineType.Character,
+                description);
         lines.add(newHeaderLine);
         return lines;
     }

@@ -17,13 +17,6 @@ import java.util.Set;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.lang3.StringUtils;
-import org.broadinstitute.variant.variantcontext.Allele;
-import org.broadinstitute.variant.variantcontext.VariantContext;
-import org.broadinstitute.variant.variantcontext.VariantContextBuilder;
-import org.broadinstitute.variant.vcf.VCFFileReader;
-import org.broadinstitute.variant.vcf.VCFHeader;
-import org.broadinstitute.variant.vcf.VCFHeaderLineCount;
-import org.broadinstitute.variant.vcf.VCFInfoHeaderLine;
 
 import com.cloudinside.bio.VcfToolbox.IAnnotator;
 import com.cloudinside.bio.model.vcf.VcfLine;
@@ -33,6 +26,14 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Range;
+
+import htsjdk.variant.variantcontext.Allele;
+import htsjdk.variant.variantcontext.VariantContext;
+import htsjdk.variant.variantcontext.VariantContextBuilder;
+import htsjdk.variant.vcf.VCFFileReader;
+import htsjdk.variant.vcf.VCFHeader;
+import htsjdk.variant.vcf.VCFHeaderLineCount;
+import htsjdk.variant.vcf.VCFInfoHeaderLine;
 
 public class VcfRadiusAnnotator implements IAnnotator {
     private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(VcfRadiusAnnotator.class);

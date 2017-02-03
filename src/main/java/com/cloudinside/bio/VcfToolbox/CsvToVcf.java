@@ -18,9 +18,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
 
-import net.sf.picard.reference.FastaSequenceFile;
-import net.sf.picard.reference.ReferenceSequence;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -30,14 +27,18 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 
+import htsjdk.samtools.reference.FastaSequenceFile;
+import htsjdk.samtools.reference.ReferenceSequence;
+
 /**
  * Translates tsv file with column headers to vcf
  * 
  * @author pstawinski f.ex.
  * 
  *         <pre>
+ *  
  * --input /tmp/MutationsSomatic.txt --chr chr --pos start --ref ref --alt obs --ignore end --refseq /wum/pio/processing-data/reference-seq/rcrs/rcrs.fasta
- * </pre>
+ *         </pre>
  */
 public class CsvToVcf {
     private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(CsvToVcf.class);

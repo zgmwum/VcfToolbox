@@ -16,13 +16,14 @@ import java.util.Map.Entry;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.io.IOUtils;
-import org.broadinstitute.variant.vcf.VCFHeader;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.cloudinside.bio.model.vcf.VcfLine;
 import com.cloudinside.bio.model.vcf.VcfStreamReader;
 import com.cloudinside.bio.model.vcf.VcfStreamWriter;
+
+import htsjdk.variant.vcf.VCFHeader;
 
 /**
  * Read no-sample vcf file

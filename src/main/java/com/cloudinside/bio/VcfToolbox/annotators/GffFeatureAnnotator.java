@@ -7,17 +7,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.broad.tribble.readers.TabixReader.Iterator;
-import org.broadinstitute.variant.variantcontext.VariantContext;
-import org.broadinstitute.variant.variantcontext.VariantContextBuilder;
-import org.broadinstitute.variant.vcf.VCFInfoHeaderLine;
-
 import com.cloudinside.bio.VcfToolbox.IAnnotator;
 import com.cloudinside.bio.model.vcf.VcfLine;
 import com.google.common.base.Splitter;
 import com.google.common.base.Splitter.MapSplitter;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+
+import htsjdk.tribble.readers.TabixReader.Iterator;
+import htsjdk.variant.variantcontext.VariantContext;
+import htsjdk.variant.variantcontext.VariantContextBuilder;
+import htsjdk.variant.vcf.VCFInfoHeaderLine;
 
 public class GffFeatureAnnotator extends TabixAnnotator implements IAnnotator {
     private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(GffFeatureAnnotator.class);

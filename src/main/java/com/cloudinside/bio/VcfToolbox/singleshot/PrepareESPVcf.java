@@ -14,15 +14,16 @@ import java.util.Locale;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.io.IOUtils;
-import org.broadinstitute.variant.vcf.VCFHeader;
-import org.broadinstitute.variant.vcf.VCFHeaderLineType;
-import org.broadinstitute.variant.vcf.VCFInfoHeaderLine;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.cloudinside.bio.model.vcf.VcfLine;
 import com.cloudinside.bio.model.vcf.VcfStreamReader;
 import com.cloudinside.bio.model.vcf.VcfStreamWriter;
+
+import htsjdk.variant.vcf.VCFHeader;
+import htsjdk.variant.vcf.VCFHeaderLineType;
+import htsjdk.variant.vcf.VCFInfoHeaderLine;
 
 /**
  * Read no-sample vcf file
@@ -112,10 +113,8 @@ public class PrepareESPVcf {
 
             vc.getInfo().put("EUR_AF", df.format((double) allele_1_EurAc / (double) (allele_1_EurAc + allele_2_EurAc)));
             vc.getInfo().put("AFR_AF", df.format((double) allele_1_AfrAc / (double) (allele_1_AfrAc + allele_2_AfrAc)));
-            vc.getInfo().put(
-                    "TOT_AF",
-                    df.format((double) (allele_1_EurAc + allele_1_AfrAc)
-                            / (double) (allele_1_AfrAc + allele_2_AfrAc + allele_1_EurAc + allele_2_EurAc)));
+            vc.getInfo().put("TOT_AF", df.format((double) (allele_1_EurAc + allele_1_AfrAc)
+                    / (double) (allele_1_AfrAc + allele_2_AfrAc + allele_1_EurAc + allele_2_EurAc)));
 
             vcfStreamWriter.write(vc);
 

@@ -4,10 +4,10 @@ import java.io.Closeable;
 import java.util.Collection;
 import java.util.Map;
 
-import org.broadinstitute.variant.variantcontext.VariantContext;
-import org.broadinstitute.variant.vcf.VCFInfoHeaderLine;
-
 import com.cloudinside.bio.model.vcf.VcfLine;
+
+import htsjdk.variant.variantcontext.VariantContext;
+import htsjdk.variant.vcf.VCFInfoHeaderLine;
 
 public interface IAnnotator extends Closeable {
     void setSelectAttributes(Collection<String> attributes);

@@ -23,9 +23,6 @@ import java.util.Set;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.lang3.StringUtils;
-import org.broadinstitute.variant.vcf.VCFHeader;
-import org.broadinstitute.variant.vcf.VCFHeaderLineType;
-import org.broadinstitute.variant.vcf.VCFInfoHeaderLine;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
@@ -37,6 +34,10 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Sets;
+
+import htsjdk.variant.vcf.VCFHeader;
+import htsjdk.variant.vcf.VCFHeaderLineType;
+import htsjdk.variant.vcf.VCFInfoHeaderLine;
 
 /**
  * In hg-summary.vcf
@@ -101,8 +102,8 @@ public class MarkRecessiveChanges {
             header.addMetaDataLine(new VCFInfoHeaderLine("ZGM_Samples_Recessive", 1, VCFHeaderLineType.String,
                     "samples having two variants in one gene"));
 
-            VcfStreamWriter vcfStreamWriter = new VcfStreamWriter(new BufferedWriter(new OutputStreamWriter(
-                    outputStream)));
+            VcfStreamWriter vcfStreamWriter = new VcfStreamWriter(
+                    new BufferedWriter(new OutputStreamWriter(outputStream)));
 
             vcfStreamWriter.setVcfHeader(header);
             vcfStreamWriter.setSamplesLine(vcfStreamReader.getSamplesLine());

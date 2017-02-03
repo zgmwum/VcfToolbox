@@ -11,12 +11,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.broadinstitute.variant.variantcontext.Allele;
-import org.broadinstitute.variant.variantcontext.VariantContext;
-import org.broadinstitute.variant.variantcontext.VariantContextBuilder;
-import org.broadinstitute.variant.vcf.VCFHeaderLineType;
-import org.broadinstitute.variant.vcf.VCFInfoHeaderLine;
-
 import com.cloudinside.bio.VcfToolbox.IAnnotator;
 import com.cloudinside.bio.VcfToolbox.utils.ChromosomePosition;
 import com.cloudinside.bio.model.vcf.VcfLine;
@@ -25,6 +19,12 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Range;
 import com.google.common.collect.RangeMap;
 import com.google.common.collect.TreeRangeMap;
+
+import htsjdk.variant.variantcontext.Allele;
+import htsjdk.variant.variantcontext.VariantContext;
+import htsjdk.variant.variantcontext.VariantContextBuilder;
+import htsjdk.variant.vcf.VCFHeaderLineType;
+import htsjdk.variant.vcf.VCFInfoHeaderLine;
 
 public class BedNonOverlappingAnnotator implements IAnnotator {
     private static final org.apache.log4j.Logger log = org.apache.log4j.Logger
@@ -116,7 +116,8 @@ public class BedNonOverlappingAnnotator implements IAnnotator {
     public Collection<VCFInfoHeaderLine> getInfoHeaderLines() {
 
         Set<VCFInfoHeaderLine> lines = new HashSet<>();
-        VCFInfoHeaderLine newHeaderLine = new VCFInfoHeaderLine(columnName, 1, VCFHeaderLineType.Character, description);
+        VCFInfoHeaderLine newHeaderLine = new VCFInfoHeaderLine(columnName, 1, VCFHeaderLineType.Character,
+                description);
         lines.add(newHeaderLine);
         return lines;
     }
@@ -199,8 +200,8 @@ public class BedNonOverlappingAnnotator implements IAnnotator {
     }
 
     public static void main(String[] args) {
-        BedNonOverlappingAnnotator ba = new BedNonOverlappingAnnotator(
-                "/wum/pio/annotatios/mito-annotations/mtLoc.bed", "column", "desc");
+        BedNonOverlappingAnnotator ba = new BedNonOverlappingAnnotator("/wum/pio/annotatios/mito-annotations/mtLoc.bed",
+                "column", "desc");
         VariantContext vs = new VariantContextBuilder().chr("chrM").start(112).stop(112).alleles("A", "C").make();
         VariantContext avs = ba.annotate(vs);
         System.out.println(avs);

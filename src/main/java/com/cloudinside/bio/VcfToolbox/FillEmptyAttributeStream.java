@@ -13,13 +13,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.zip.GZIPInputStream;
 
-import org.broadinstitute.variant.vcf.VCFHeader;
-
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.cloudinside.bio.model.vcf.VcfLine;
 import com.cloudinside.bio.model.vcf.VcfStreamReader;
 import com.cloudinside.bio.model.vcf.VcfStreamWriter;
+
+import htsjdk.variant.vcf.VCFHeader;
 
 /**
  * Finds variants in genes that are possibly damaging and appears twice (i.e.

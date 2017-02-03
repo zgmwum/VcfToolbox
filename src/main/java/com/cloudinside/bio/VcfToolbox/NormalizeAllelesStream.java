@@ -17,17 +17,16 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
 
-import net.sf.picard.reference.ReferenceSequenceFile;
-import net.sf.picard.reference.ReferenceSequenceFileFactory;
-
-import org.broadinstitute.variant.vcf.VCFHeader;
-
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.cloudinside.bio.model.vcf.VcfLine;
 import com.cloudinside.bio.model.vcf.VcfStreamReader;
 import com.cloudinside.bio.model.vcf.VcfStreamWriter;
 import com.google.common.collect.ImmutableSet;
+
+import htsjdk.samtools.reference.ReferenceSequenceFile;
+import htsjdk.samtools.reference.ReferenceSequenceFileFactory;
+import htsjdk.variant.vcf.VCFHeader;
 
 /**
  * Input: single observations vcf; output: normalized observations, not merged;
@@ -75,8 +74,8 @@ public class NormalizeAllelesStream {
 
     private void go() throws IOException {
 
-        ReferenceSequenceFile referenceReader = ReferenceSequenceFileFactory.getReferenceSequenceFile(new File(
-                referenceFile), true);
+        ReferenceSequenceFile referenceReader = ReferenceSequenceFileFactory
+                .getReferenceSequenceFile(new File(referenceFile), true);
 
         // TODO Auto-generated method stub
         InputStream inputStream;
@@ -126,8 +125,9 @@ public class NormalizeAllelesStream {
                     if (ref.isEmpty() || alt.isEmpty()) {
                         // add base to the left, if become empty
                         position--;
-                        String newNucl = new String(referenceReader.getSubsequenceAt(vc.getChr(), position, position)
-                                .getBases()).toUpperCase();
+                        String newNucl = new String(
+                                referenceReader.getSubsequenceAt(vc.getChr(), position, position).getBases())
+                                        .toUpperCase();
                         ref = newNucl + ref;
                         alt = newNucl + alt;
                         changed = true;

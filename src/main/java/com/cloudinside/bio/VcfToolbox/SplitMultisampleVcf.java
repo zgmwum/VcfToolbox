@@ -8,20 +8,20 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import net.sf.samtools.util.CloseableIterator;
-
 import org.apache.commons.io.IOUtils;
-import org.broadinstitute.variant.variantcontext.Genotype;
-import org.broadinstitute.variant.variantcontext.VariantContext;
-import org.broadinstitute.variant.variantcontext.VariantContextBuilder;
-import org.broadinstitute.variant.variantcontext.writer.Options;
-import org.broadinstitute.variant.variantcontext.writer.VariantContextWriter;
-import org.broadinstitute.variant.variantcontext.writer.VariantContextWriterFactory;
-import org.broadinstitute.variant.vcf.VCFFileReader;
-import org.broadinstitute.variant.vcf.VCFHeader;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
+
+import htsjdk.samtools.util.CloseableIterator;
+import htsjdk.variant.variantcontext.Genotype;
+import htsjdk.variant.variantcontext.VariantContext;
+import htsjdk.variant.variantcontext.VariantContextBuilder;
+import htsjdk.variant.variantcontext.writer.Options;
+import htsjdk.variant.variantcontext.writer.VariantContextWriter;
+import htsjdk.variant.variantcontext.writer.VariantContextWriterFactory;
+import htsjdk.variant.vcf.VCFFileReader;
+import htsjdk.variant.vcf.VCFHeader;
 
 /**
  * Read multisample vcf file, writes multiple vcfs, one per sample
@@ -68,17 +68,17 @@ public class SplitMultisampleVcf {
         VCFHeader header = vcfFileReader.getFileHeader();
         CloseableIterator<VariantContext> it = vcfFileReader.iterator();
 
-        EnumSet<Options> options = ignoreInputIndex ? EnumSet.of(Options.INDEX_ON_THE_FLY) : EnumSet
-                .noneOf(Options.class);
+        EnumSet<Options> options = ignoreInputIndex ? EnumSet.of(Options.INDEX_ON_THE_FLY)
+                : EnumSet.noneOf(Options.class);
         if (ignoreMissingHeader)
             options.add(Options.ALLOW_MISSING_FIELDS_IN_HEADER);
 
         List<String> sampleNames = vcfFileReader.getFileHeader().getSampleNamesInOrder();
         Map<String, VariantContextWriter> writers = new HashMap<>();
         for (String sampleName : sampleNames) {
-            final VariantContextWriter vcfWriter = VariantContextWriterFactory.sortOnTheFly(
-                    VariantContextWriterFactory.create(new File(outputPrefix + sampleName + ".vcf"),
-                            header.getSequenceDictionary(), options), 10000);
+            final VariantContextWriter vcfWriter = VariantContextWriterFactory.sortOnTheFly(VariantContextWriterFactory
+                    .create(new File(outputPrefix + sampleName + ".vcf"), header.getSequenceDictionary(), options),
+                    10000);
             vcfWriter.writeHeader(header);
             writers.put(sampleName, vcfWriter);
 

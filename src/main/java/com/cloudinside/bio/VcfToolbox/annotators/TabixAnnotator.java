@@ -3,8 +3,8 @@ package com.cloudinside.bio.VcfToolbox.annotators;
 import java.io.Closeable;
 import java.io.IOException;
 
-import org.broad.tribble.readers.TabixReader;
-import org.broad.tribble.readers.TabixReader.Iterator;
+import htsjdk.tribble.readers.TabixReader;
+import htsjdk.tribble.readers.TabixReader.Iterator;
 
 public abstract class TabixAnnotator implements Closeable {
     private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(TabixAnnotator.class);
@@ -51,12 +51,13 @@ public abstract class TabixAnnotator implements Closeable {
                 }
             }
 
-            Integer chrId = tabixReader.mChr2tid.get(chr);
-            if (chrId == null) {
-                log.debug("No chromosome named " + chr + " registered in " + filename);
-                return null;
-            } else
-                return tabixReader.query(chrId, start - 1, end - 1);
+            // Integer chrId = tabixReader.mChr2tid.get(chr);
+            // if (chrId == null) {
+            // log.debug("No chromosome named " + chr + " registered in " +
+            // filename);
+            // return null;
+            // } else
+            return tabixReader.query(chr, start - 1, end - 1);
 
             // return tabixReader.query(chr + ":" + start + "-" + end);
 

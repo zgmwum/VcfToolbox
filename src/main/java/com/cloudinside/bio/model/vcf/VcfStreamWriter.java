@@ -5,8 +5,9 @@ import java.io.Closeable;
 import java.io.IOException;
 
 import org.apache.commons.io.IOUtils;
-import org.broadinstitute.variant.vcf.VCFHeader;
-import org.broadinstitute.variant.vcf.VCFHeaderLine;
+
+import htsjdk.variant.vcf.VCFHeader;
+import htsjdk.variant.vcf.VCFHeaderLine;
 
 public class VcfStreamWriter implements Closeable {
     private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(VcfStreamWriter.class);

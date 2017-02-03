@@ -15,9 +15,6 @@ import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.broadinstitute.variant.vcf.VCFHeader;
-import org.broadinstitute.variant.vcf.VCFHeaderLineType;
-import org.broadinstitute.variant.vcf.VCFInfoHeaderLine;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
@@ -29,6 +26,10 @@ import com.google.common.base.Optional;
 import com.google.common.collect.Range;
 import com.google.common.collect.RangeMap;
 import com.google.common.collect.TreeRangeMap;
+
+import htsjdk.variant.vcf.VCFHeader;
+import htsjdk.variant.vcf.VCFHeaderLineType;
+import htsjdk.variant.vcf.VCFInfoHeaderLine;
 
 /**
  * Read no-sample vcf file
@@ -170,8 +171,8 @@ public class AnnotateBedStream {
                 int distanceRight = Integer.MAX_VALUE;
 
                 ChromosomePosition right = borders.ceiling(position);
-                distanceRight = Optional.fromNullable(ChromosomePosition.distance(right, position)).or(
-                        Integer.MAX_VALUE);
+                distanceRight = Optional.fromNullable(ChromosomePosition.distance(right, position))
+                        .or(Integer.MAX_VALUE);
 
                 int distance = Math.min(distanceLeft, distanceRight);
                 vc.getInfo().put(fieldName, distance);

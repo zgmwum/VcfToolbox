@@ -20,14 +20,14 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
 
-import org.broadinstitute.variant.vcf.VCFHeader;
-
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.cloudinside.bio.model.vcf.VcfLine;
 import com.cloudinside.bio.model.vcf.VcfStreamReader;
 import com.cloudinside.bio.model.vcf.VcfStreamWriter;
 import com.google.common.collect.ImmutableSet;
+
+import htsjdk.variant.vcf.VCFHeader;
 
 /**
  * Adjacent equal variants are connected, AC and AF are summed up; can be used
@@ -110,8 +110,7 @@ public class CollapseEqualMultisampleStream {
                 if (previousLine == null) {
                     previousLine = vc;
                 } else {
-                    if (previousLine.getChr().equals(vc.getChr())
-                            && previousLine.getPosition().equals(vc.getPosition())
+                    if (previousLine.getChr().equals(vc.getChr()) && previousLine.getPosition().equals(vc.getPosition())
                             && previousLine.getAlt().equals(vc.getAlt())) {
                         collapse(previousLine, vc, "AF", true);
                         collapse(previousLine, vc, "AC", false);
@@ -201,13 +200,14 @@ public class CollapseEqualMultisampleStream {
 
     private void collapse(VcfLine previousLine, VcfLine vc, String field, boolean isDouble) {
         if (previousLine.getInfo().containsKey(field) && vc.getInfo().containsKey(field)) {
-            previousLine.getInfo().put(
-                    field,
-                    isDouble ? String.format("%.6f",
-                            ((Double.valueOf((String) previousLine.getInfo().get(field)) + Double.valueOf((String) vc
-                                    .getInfo().get(field)))), Locale.ENGLISH) : Integer.toString((Integer
-                            .valueOf((String) previousLine.getInfo().get(field)) + Integer.valueOf((String) vc
-                            .getInfo().get(field)))));
+            previousLine.getInfo()
+                    .put(field, isDouble
+                            ? String.format("%.6f",
+                                    ((Double.valueOf((String) previousLine.getInfo().get(field))
+                                            + Double.valueOf((String) vc.getInfo().get(field)))),
+                                    Locale.ENGLISH)
+                            : Integer.toString((Integer.valueOf((String) previousLine.getInfo().get(field))
+                                    + Integer.valueOf((String) vc.getInfo().get(field)))));
         }
     }
 }

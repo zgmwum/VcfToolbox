@@ -9,16 +9,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import net.sf.samtools.util.CloseableIterator;
-
 import org.apache.commons.io.IOUtils;
-import org.broadinstitute.variant.variantcontext.VariantContext;
-import org.broadinstitute.variant.variantcontext.writer.Options;
-import org.broadinstitute.variant.variantcontext.writer.VariantContextWriter;
-import org.broadinstitute.variant.variantcontext.writer.VariantContextWriterFactory;
-import org.broadinstitute.variant.vcf.VCFFileReader;
-import org.broadinstitute.variant.vcf.VCFHeader;
-import org.broadinstitute.variant.vcf.VCFInfoHeaderLine;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
@@ -26,6 +17,15 @@ import com.cloudinside.bio.VcfToolbox.annotators.GffFeatureAnnotator;
 import com.cloudinside.bio.VcfToolbox.annotators.VcfFeatureAnnotator;
 import com.google.common.base.Splitter;
 import com.google.common.base.Stopwatch;
+
+import htsjdk.samtools.util.CloseableIterator;
+import htsjdk.variant.variantcontext.VariantContext;
+import htsjdk.variant.variantcontext.writer.Options;
+import htsjdk.variant.variantcontext.writer.VariantContextWriter;
+import htsjdk.variant.variantcontext.writer.VariantContextWriterFactory;
+import htsjdk.variant.vcf.VCFFileReader;
+import htsjdk.variant.vcf.VCFHeader;
+import htsjdk.variant.vcf.VCFInfoHeaderLine;
 
 /**
  * 

@@ -4,21 +4,21 @@ import java.io.File;
 import java.util.EnumSet;
 import java.util.Locale;
 
-import net.sf.samtools.util.CloseableIterator;
-
 import org.apache.commons.io.IOUtils;
-import org.broadinstitute.variant.variantcontext.Allele;
-import org.broadinstitute.variant.variantcontext.VariantContext;
-import org.broadinstitute.variant.variantcontext.VariantContextBuilder;
-import org.broadinstitute.variant.variantcontext.writer.Options;
-import org.broadinstitute.variant.variantcontext.writer.VariantContextWriter;
-import org.broadinstitute.variant.variantcontext.writer.VariantContextWriterFactory;
-import org.broadinstitute.variant.vcf.VCFFileReader;
-import org.broadinstitute.variant.vcf.VCFHeader;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.google.common.base.Strings;
+
+import htsjdk.samtools.util.CloseableIterator;
+import htsjdk.variant.variantcontext.Allele;
+import htsjdk.variant.variantcontext.VariantContext;
+import htsjdk.variant.variantcontext.VariantContextBuilder;
+import htsjdk.variant.variantcontext.writer.Options;
+import htsjdk.variant.variantcontext.writer.VariantContextWriter;
+import htsjdk.variant.variantcontext.writer.VariantContextWriterFactory;
+import htsjdk.variant.vcf.VCFFileReader;
+import htsjdk.variant.vcf.VCFHeader;
 
 /**
  * Normalizes genotypes, when only single ALT exists. Changes TTC>TTCC into C>CC
@@ -68,8 +68,8 @@ public class NormalizeGenotypes {
         VCFHeader header = vcfFileReader.getFileHeader();
         CloseableIterator<VariantContext> it = vcfFileReader.iterator();
 
-        EnumSet<Options> options = ignoreInputIndex ? EnumSet.of(Options.INDEX_ON_THE_FLY) : EnumSet
-                .noneOf(Options.class);
+        EnumSet<Options> options = ignoreInputIndex ? EnumSet.of(Options.INDEX_ON_THE_FLY)
+                : EnumSet.noneOf(Options.class);
         if (ignoreMissingHeader)
             options.add(Options.ALLOW_MISSING_FIELDS_IN_HEADER);
 

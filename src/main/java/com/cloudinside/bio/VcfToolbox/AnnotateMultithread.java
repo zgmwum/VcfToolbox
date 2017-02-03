@@ -12,16 +12,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import net.sf.samtools.util.CloseableIterator;
-
 import org.apache.commons.io.IOUtils;
-import org.broadinstitute.variant.variantcontext.VariantContext;
-import org.broadinstitute.variant.variantcontext.writer.Options;
-import org.broadinstitute.variant.variantcontext.writer.VariantContextWriter;
-import org.broadinstitute.variant.variantcontext.writer.VariantContextWriterFactory;
-import org.broadinstitute.variant.vcf.VCFFileReader;
-import org.broadinstitute.variant.vcf.VCFHeader;
-import org.broadinstitute.variant.vcf.VCFInfoHeaderLine;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
@@ -32,6 +23,15 @@ import com.cloudinside.bio.VcfToolbox.utils.NoSplitter;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import com.google.common.base.Stopwatch;
+
+import htsjdk.samtools.util.CloseableIterator;
+import htsjdk.variant.variantcontext.VariantContext;
+import htsjdk.variant.variantcontext.writer.Options;
+import htsjdk.variant.variantcontext.writer.VariantContextWriter;
+import htsjdk.variant.variantcontext.writer.VariantContextWriterFactory;
+import htsjdk.variant.vcf.VCFFileReader;
+import htsjdk.variant.vcf.VCFHeader;
+import htsjdk.variant.vcf.VCFInfoHeaderLine;
 
 /**
  * 
@@ -94,8 +94,8 @@ public class AnnotateMultithread {
         if (ignoreMissingHeader)
             options.add(Options.ALLOW_MISSING_FIELDS_IN_HEADER);
 
-        vcfWriter = VariantContextWriterFactory
-                .create(new File(outputVcfFile), header.getSequenceDictionary(), options);
+        vcfWriter = VariantContextWriterFactory.create(new File(outputVcfFile), header.getSequenceDictionary(),
+                options);
 
         List<IAnnotator> annotators = openAnnotators(annotationsFile);
 
@@ -190,8 +190,8 @@ public class AnnotateMultithread {
             } else if (fileName.endsWith(".gff") || fileName.endsWith(".gff.gz")) {
                 annotator = new GffFeatureAnnotator(fileName, columns);
             } else if (fileName.endsWith(".bed") || fileName.endsWith(".bed.gz")) {
-                annotator = new BedAnnotator(fileName, columns.get(0), CharMatcher.JAVA_LETTER_OR_DIGIT.negate()
-                        .replaceFrom(fileName, "_"));
+                annotator = new BedAnnotator(fileName, columns.get(0),
+                        CharMatcher.JAVA_LETTER_OR_DIGIT.negate().replaceFrom(fileName, "_"));
             } else {
                 throw new NullPointerException("unable to detect file type from filename: " + fileName);
             }

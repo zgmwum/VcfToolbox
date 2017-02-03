@@ -21,8 +21,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.io.IOUtils;
-import org.broadinstitute.variant.vcf.VCFHeader;
-import org.broadinstitute.variant.vcf.VCFInfoHeaderLine;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
@@ -37,6 +35,9 @@ import com.cloudinside.bio.model.vcf.VcfStreamWriter;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import com.google.common.base.Stopwatch;
+
+import htsjdk.variant.vcf.VCFHeader;
+import htsjdk.variant.vcf.VCFInfoHeaderLine;
 
 /**
  * 
@@ -218,8 +219,8 @@ public class AnnotateMultithreadStream {
             } else if (fileName.endsWith(".gff") || fileName.endsWith(".gff.gz")) {
                 annotator = new GffFeatureAnnotator(fileName, columns);
             } else if (fileName.endsWith(".bed") || fileName.endsWith(".bed.gz")) {
-                annotator = new BedAnnotator(fileName, columns.get(0), CharMatcher.JAVA_LETTER_OR_DIGIT.negate()
-                        .replaceFrom(fileName, "_"));
+                annotator = new BedAnnotator(fileName, columns.get(0),
+                        CharMatcher.JAVA_LETTER_OR_DIGIT.negate().replaceFrom(fileName, "_"));
             } else {
                 throw new NullPointerException("unable to detect file type from filename: " + fileName);
             }

@@ -14,27 +14,27 @@ import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import net.sf.samtools.util.CloseableIterator;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.broadinstitute.variant.variantcontext.Genotype;
-import org.broadinstitute.variant.variantcontext.VariantContext;
-import org.broadinstitute.variant.variantcontext.VariantContextBuilder;
-import org.broadinstitute.variant.variantcontext.writer.Options;
-import org.broadinstitute.variant.variantcontext.writer.VariantContextWriter;
-import org.broadinstitute.variant.variantcontext.writer.VariantContextWriterFactory;
-import org.broadinstitute.variant.vcf.VCFFileReader;
-import org.broadinstitute.variant.vcf.VCFHeader;
-import org.broadinstitute.variant.vcf.VCFHeaderLine;
-import org.broadinstitute.variant.vcf.VCFHeaderLineCount;
-import org.broadinstitute.variant.vcf.VCFHeaderLineType;
-import org.broadinstitute.variant.vcf.VCFInfoHeaderLine;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.cloudinside.bio.utils.NaturalOrderComparator;
 import com.google.common.collect.ComparisonChain;
+
+import htsjdk.samtools.util.CloseableIterator;
+import htsjdk.variant.variantcontext.Genotype;
+import htsjdk.variant.variantcontext.VariantContext;
+import htsjdk.variant.variantcontext.VariantContextBuilder;
+import htsjdk.variant.variantcontext.writer.Options;
+import htsjdk.variant.variantcontext.writer.VariantContextWriter;
+import htsjdk.variant.variantcontext.writer.VariantContextWriterFactory;
+import htsjdk.variant.vcf.VCFFileReader;
+import htsjdk.variant.vcf.VCFHeader;
+import htsjdk.variant.vcf.VCFHeaderLine;
+import htsjdk.variant.vcf.VCFHeaderLineCount;
+import htsjdk.variant.vcf.VCFHeaderLineType;
+import htsjdk.variant.vcf.VCFInfoHeaderLine;
 
 /**
  * Vcf files must be in single obs form (no observations X,Y) sorted by
@@ -92,8 +92,8 @@ public class JoinVariants {
             throw new NullPointerException(); // :D
         }
 
-        EnumSet<Options> options = createOutputIndex ? EnumSet.of(Options.INDEX_ON_THE_FLY) : EnumSet
-                .noneOf(Options.class);
+        EnumSet<Options> options = createOutputIndex ? EnumSet.of(Options.INDEX_ON_THE_FLY)
+                : EnumSet.noneOf(Options.class);
         if (ignoreMissingHeader)
             options.add(Options.ALLOW_MISSING_FIELDS_IN_HEADER);
         VariantContextWriter vcfWriter = null;
@@ -122,8 +122,8 @@ public class JoinVariants {
                     Set<VCFHeaderLine> headerLines = new HashSet<>();
                     headerLines.addAll(header.getContigLines());
                     headerLines.addAll(header.getFilterLines());
-                    oputputHeader = new VCFHeader(headerLines, Collections.singletonList(header.getSampleNamesInOrder()
-                            .get(0)));
+                    oputputHeader = new VCFHeader(headerLines,
+                            Collections.singletonList(header.getSampleNamesInOrder().get(0)));
 
                     oputputHeader.addMetaDataLine(new VCFInfoHeaderLine(ZGM_VCF_SUPPORTING_NUM, 1,
                             VCFHeaderLineType.Integer, "number of files supporting this change"));
