@@ -147,12 +147,17 @@ public class CountGvcfCoverage {
                 }
                 String formatDeclaration = splitted[8];
                 String format = splitted[9];
-                Integer GQ_index = colonSplitter.splitToList(formatDeclaration).indexOf("GQ");
+                int GQ_index = colonSplitter.splitToList(formatDeclaration).indexOf("GQ");
                 Integer GQ_value = null;
-                if (GQ_index == null) {
+                if (GQ_index == -1) {
                     log.warn("No GQ in " + line);
                 } else {
-                    GQ_value = Integer.valueOf(colonSplitter.splitToList(format).get(GQ_index));
+                    try {
+                        GQ_value = Integer.valueOf(colonSplitter.splitToList(format).get(GQ_index));
+                    } catch (Exception e) {
+                        log.error("Error parsing: " + format + "to get GQ with index: " + GQ_index);
+                        e.printStackTrace();
+                    }
                 }
 
                 if (GQ_value == null) {
