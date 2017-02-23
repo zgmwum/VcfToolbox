@@ -162,9 +162,7 @@ public class CountGvcfCoverage {
 
                 if (GQ_value == null) {
                     log.warn("No GQvalue in " + line);
-                }
-
-                if (GQ_value > 0) {
+                } else if (GQ_value > 0) {
                     if (end != null) {
                         for (Integer pos = start; pos <= end; pos++) {
                             ChromosomePosition chromosomePosition = new ChromosomePosition(chr, pos);
