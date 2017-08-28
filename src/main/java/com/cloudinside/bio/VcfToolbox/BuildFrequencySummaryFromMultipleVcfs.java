@@ -31,8 +31,9 @@ import com.google.common.collect.TreeMultimap;
 import htsjdk.variant.variantcontext.VariantContext;
 import htsjdk.variant.variantcontext.VariantContextBuilder;
 import htsjdk.variant.variantcontext.writer.Options;
+import htsjdk.variant.variantcontext.writer.SortingVariantContextWriter;
 import htsjdk.variant.variantcontext.writer.VariantContextWriter;
-import htsjdk.variant.variantcontext.writer.VariantContextWriterFactory;
+import htsjdk.variant.variantcontext.writer.VariantContextWriterBuilder;
 import htsjdk.variant.vcf.VCFHeader;
 import htsjdk.variant.vcf.VCFHeaderLine;
 import htsjdk.variant.vcf.VCFHeaderLineCount;
@@ -114,8 +115,13 @@ public class BuildFrequencySummaryFromMultipleVcfs {
 
         final EnumSet<Options> options = ignoreInputIndex ? EnumSet.of(Options.INDEX_ON_THE_FLY)
                 : EnumSet.noneOf(Options.class);
-        final VariantContextWriter vcfWriter = VariantContextWriterFactory
-                .sortOnTheFly(VariantContextWriterFactory.create(new File(outputVcfFile), null, options), 1000);
+        // final VariantContextWriter vcfWriter = VariantContextWriterFactory
+        // .sortOnTheFly(VariantContextWriterFactory.create(new
+        // File(outputVcfFile), null, options), 1000);
+
+        final VariantContextWriter vcfWriter = new SortingVariantContextWriter(
+                new VariantContextWriterBuilder().setOutputFile(new File(outputVcfFile)).setOptions(options).build(),
+                10000, true);
 
         Set<VCFHeaderLine> set = Collections.emptySet();
         List<String> list = Collections.emptyList();
