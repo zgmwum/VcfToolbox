@@ -79,6 +79,12 @@ public class CsvToVcf {
     }
 
     private void go() {
+
+        posColName = posColName.replace("\"", "").replace("-", "_");
+        chrColName = chrColName.replace("\"", "").replace("-", "_");
+        refColName = refColName.replace("\"", "").replace("-", "_");
+        altColName = altColName.replace("\"", "").replace("-", "_");
+
         // TODO Auto-generated method stub
         String filename = inputTsvFile; // "/archive/pio/tmp/merged_bcf.changed.vcf.gz";
         File file = new File(filename);
