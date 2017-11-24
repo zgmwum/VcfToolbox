@@ -226,7 +226,7 @@ public class BuildFrequencySummaryFromMultipleVcfs {
                     VariantBasicData vbd = new VariantBasicData(chr, pos, ref, obs);
                     // check if is homo or heterozyg
 
-                    variantToSampleName.put(vbd, currentSampleName + ((homo != null && homo) ? "*" : ""));
+                    variantToSampleName.put(vbd, (currentSampleName + ((homo != null && homo) ? "*" : "")).intern());
                 }
             }
         } catch (IOException e) {

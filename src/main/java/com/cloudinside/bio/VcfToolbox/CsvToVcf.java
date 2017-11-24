@@ -143,7 +143,7 @@ public class CsvToVcf {
                             // omit
                         } else {
                             bw.write("##INFO=<ID=" + colName
-                                    + ",Number=1,Type=String,Description=\"Description needed\">\n");
+                                    + ",Number=.,Type=String,Description=\"Description needed\">\n");
                         }
                     }
                 } else {
@@ -152,44 +152,58 @@ public class CsvToVcf {
                         bw.write("#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\n");
                     }
 
-                    int index = 0;
-                    int position = 0;
-                    String chr = null;
-                    String ref = null, alt = null;
-                    Map<String, String> columnToValue = new HashMap<>();
-                    for (String value : Splitter.on('\t').splitToList(line)) {
+                    try {
 
-                        value = value.trim().replace("\"", "").replace(" ", "_").replace(";", "_");
-                        // .replace("/", "_")
-                        // .replace("'", "_")
-                        // .replace("&", "_");
-                        String colName = columnNamesList.get(index);
-                        if (ignoreColNameSet.contains(colName)) {
-                            // omit
-                        } else if (chrColName.equals(colName)) {
-                            chr = value;
-                        } else if (posColName.equals(colName)) {
-                            position = Integer.valueOf(value);
-                        } else if (refColName.equals(colName)) {
-                            ref = value;
-                        } else if (altColName.equals(colName)) {
-                            alt = value;
-                        } else {
-                            columnToValue.put(colName, value);
+                        int index = 0;
+                        int position = 0;
+                        String chr = null;
+                        String ref = null, alt = null;
+                        Map<String, String> columnToValue = new HashMap<>();
+                        for (String value : Splitter.on('\t').splitToList(line)) {
+
+                            value = value.trim().replace("\"", "").replace(" ", "_").replace(";", "_");
+                            // .replace("/", "_")
+                            // .replace("'", "_")
+                            // .replace("&", "_");
+                            String colName = columnNamesList.get(index);
+                            if (ignoreColNameSet.contains(colName)) {
+                                // omit
+                            } else if (chrColName.equals(colName)) {
+                                chr = value;
+                            } else if (posColName.equals(colName)) {
+                                if (".".equals(value)) {
+                                    // omit
+                                    log.warn("Got . position, ommiting at line " + line);
+                                    position = -1;
+                                } else {
+                                    position = Integer.valueOf(value);
+                                }
+                            } else if (refColName.equals(colName)) {
+                                ref = value;
+                            } else if (altColName.equals(colName)) {
+                                alt = value;
+                            } else {
+                                columnToValue.put(colName, value);
+                            }
+                            index++;
                         }
-                        index++;
-                    }
 
-                    if ((StringUtils.isBlank(alt) || alt.equals("-")) && refseqMap != null) {
-                        byte[] sequence = refseqMap.get(chr);
-                        String prefixBase = new String(new byte[] { sequence[position - 2] });
-                        position -= 1;
-                        alt = prefixBase;
-                        ref = prefixBase + ref;
-                    }
+                        if ((StringUtils.isBlank(alt) || alt.equals("-")) && refseqMap != null) {
+                            byte[] sequence = refseqMap.get(chr);
+                            String prefixBase = new String(new byte[] { sequence[position - 2] });
+                            position -= 1;
+                            alt = prefixBase;
+                            ref = prefixBase + ref;
+                        }
 
-                    bw.write(chr + "\t" + position + "\t.\t" + ref + "\t" + alt + "\t" + ".\t.\t"
-                            + Joiner.on(";").withKeyValueSeparator("=").join(columnToValue) + "\n");
+                        if (position != -1) {
+                            bw.write(chr + "\t" + position + "\t.\t" + ref + "\t" + alt + "\t" + ".\t.\t"
+                                    + Joiner.on(";").withKeyValueSeparator("=").join(columnToValue) + "\n");
+                        }
+                    } catch (Exception e) {
+                        log.debug("Error processing line: " + line, e);
+                        throw e;
+                    }
                 }
             }
 
