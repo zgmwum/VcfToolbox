@@ -122,6 +122,7 @@ public class JoinVariants {
                     Set<VCFHeaderLine> headerLines = new HashSet<>();
                     headerLines.addAll(header.getContigLines());
                     headerLines.addAll(header.getFilterLines());
+                    headerLines.addAll(header.getFormatHeaderLines());
                     oputputHeader = new VCFHeader(headerLines,
                             Collections.singletonList(header.getSampleNamesInOrder().get(0)));
 
