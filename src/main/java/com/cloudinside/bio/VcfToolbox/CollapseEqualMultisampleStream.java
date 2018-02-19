@@ -14,8 +14,8 @@ import java.text.NumberFormat;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
@@ -140,8 +140,8 @@ public class CollapseEqualMultisampleStream {
         try {
             previousLine.setFormat(Collections.singletonList("GT"));
 
-            LinkedHashMap<String, List<String>> samplesData = previousLine.getSamplesData();
-            for (Entry<String, List<String>> entry : samplesData.entrySet()) {
+            LinkedHashMap<String, Map<String, String>> samplesData = previousLine.getSamplesData();
+            for (Entry<String, Map<String, String>> entry : samplesData.entrySet()) {
                 String previousLineGT = entry.getValue().get(0);
                 String vcGT = vc.getSamplesData().get(entry.getKey()).get(0);
 
@@ -174,7 +174,7 @@ public class CollapseEqualMultisampleStream {
                                 + vc.getChr() + ":" + vc.getPosition());
                     }
                 }
-                entry.setValue(Collections.singletonList(gt));
+                entry.setValue(Collections.singletonMap("GT", gt));
             }
         } catch (Exception e) {
             System.err.println("Exception at " + vc.getChr() + ":" + vc.getPosition());

@@ -3,6 +3,7 @@ package com.cloudinside.bio.model.vcf;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
@@ -22,7 +23,11 @@ public class VcfLine {
     private List<String> filter;
     private LinkedHashMap<String, Object> info;
     private List<String> format;
-    private LinkedHashMap<String, List<String>> samplesData;
+    /**
+     * actually, the format encoded data; SAMPLE_NAME->FORMAT_ELEMENT->STRING
+     * VALUE
+     */
+    private LinkedHashMap<String, Map<String, String>> samplesData;
 
     public VcfLine() {
         // TODO Auto-generated constructor stub
@@ -62,16 +67,25 @@ public class VcfLine {
             vcfLine.setInfo(info);
 
             if (splitted.length > 8) {
-                vcfLine.setFormat(colonSplitter.splitToList(splitted[8]));
+                vcfLine.setFormat(new ArrayList<>(colonSplitter.splitToList(splitted[8])));
             }
             if (splitted.length > 9) {
-                LinkedHashMap<String, List<String>> samplesDataTemp = new LinkedHashMap<String, List<String>>();
+
+                LinkedHashMap<String, Map<String, String>> samplesDataTemp = new LinkedHashMap<>();
                 int index = 9;
                 for (String sampleName : sampleNames) {
                     List<String> sampleData = new ArrayList<>();
+                    Map<String, String> currentSampleFormat = new LinkedHashMap<>();
                     sampleData = colonSplitter.splitToList(splitted[index]);
-                    samplesDataTemp.put(sampleName, sampleData);
 
+                    int formatIndex = 0;
+
+                    for (String formatElement : sampleData) {
+                        currentSampleFormat.put(vcfLine.getFormat().get(formatIndex), formatElement);
+                        formatIndex++;
+                    }
+
+                    samplesDataTemp.put(sampleName, currentSampleFormat);
                     index++;
                 }
 
@@ -160,12 +174,12 @@ public class VcfLine {
         this.format = format;
     }
 
-    public void setSamplesData(LinkedHashMap<String, List<String>> samplesData) {
-        this.samplesData = samplesData;
+    public LinkedHashMap<String, Map<String, String>> getSamplesData() {
+        return samplesData;
     }
 
-    public LinkedHashMap<String, List<String>> getSamplesData() {
-        return samplesData;
+    public void setSamplesData(LinkedHashMap<String, Map<String, String>> samplesData) {
+        this.samplesData = samplesData;
     }
 
     public String toString(String[] samplesLine) {
@@ -209,7 +223,7 @@ public class VcfLine {
                 if (samplesLine != null) {
                     for (String sample : samplesLine) {
                         sb.append("\t");
-                        sb.append(colonJoiner.join(samplesData.get(sample)));
+                        sb.append(colonJoiner.join(samplesData.get(sample).values()));
 
                     }
                 }
