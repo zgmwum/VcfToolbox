@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -45,6 +46,8 @@ public class CsvToVcf {
 
     @Parameter(names = "--input", description = "Tsv file", required = true)
     private String inputTsvFile;
+    @Parameter(names = "--output", description = "Tsv file", required = true)
+    private String outputFile;
     @Parameter(names = "--chr", description = "Chromosome column name", required = true)
     private String chrColName;
     @Parameter(names = "--pos", description = "Position column name", required = true)
@@ -98,7 +101,7 @@ public class CsvToVcf {
                 br = new BufferedReader(new FileReader(file));
             }
 
-            bw = new BufferedWriter(new OutputStreamWriter(System.out));
+            bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(outputFile))));
 
             bw.write("##fileformat=VCFv4.1\n");
 
@@ -190,15 +193,36 @@ public class CsvToVcf {
 
                         if ((StringUtils.isBlank(alt) || alt.equals("-")) && refseqMap != null) {
                             byte[] sequence = refseqMap.get(chr);
+
+                            if (sequence == null) {
+                                log.error("chromosome not recognized, variant ommited: " + chr);
+                                continue;
+                            }
+
                             String prefixBase = new String(new byte[] { sequence[position - 2] });
                             position -= 1;
                             alt = prefixBase;
                             ref = prefixBase + ref;
                         }
 
+                        if ((StringUtils.isBlank(ref) || ref.equals("-")) && refseqMap != null) {
+                            byte[] sequence = refseqMap.get(chr);
+
+                            if (sequence == null) {
+                                log.error("chromosome not recognized, variant ommited: " + chr);
+                                continue;
+                            }
+
+                            String prefixBase = new String(new byte[] { sequence[position - 2] });
+                            position -= 1;
+                            alt = prefixBase + alt;
+                            ref = prefixBase;
+                        }
+
                         if (position != -1) {
-                            bw.write(chr + "\t" + position + "\t.\t" + ref + "\t" + alt + "\t" + ".\t.\t"
-                                    + Joiner.on(";").withKeyValueSeparator("=").join(columnToValue) + "\n");
+                            bw.write(chr + "\t" + position + "\t.\t" + ref.toUpperCase() + "\t" + alt.toUpperCase()
+                                    + "\t" + ".\t.\t" + Joiner.on(";").withKeyValueSeparator("=").join(columnToValue)
+                                    + "\n");
                         }
                     } catch (Exception e) {
                         log.debug("Error processing line: " + line, e);

@@ -30,6 +30,8 @@ import htsjdk.variant.variantcontext.writer.Options;
 import htsjdk.variant.variantcontext.writer.VariantContextWriter;
 import htsjdk.variant.variantcontext.writer.VariantContextWriterFactory;
 import htsjdk.variant.vcf.VCFFileReader;
+import htsjdk.variant.vcf.VCFFilterHeaderLine;
+import htsjdk.variant.vcf.VCFFormatHeaderLine;
 import htsjdk.variant.vcf.VCFHeader;
 import htsjdk.variant.vcf.VCFHeaderLine;
 import htsjdk.variant.vcf.VCFHeaderLineCount;
@@ -147,7 +149,18 @@ public class JoinVariants {
                                 infoHeaderLine.getDescription());
 
                     oputputHeader.addMetaDataLine(newHeaderLine);
+                }
 
+                // merge Filter and Format headers
+                for (VCFFilterHeaderLine filterHeaderLine : header.getFilterLines()) {
+                    if (!oputputHeader.hasFilterLine(filterHeaderLine.getID())) {
+                        oputputHeader.addMetaDataLine(filterHeaderLine);
+                    }
+                }
+                for (VCFFormatHeaderLine formatHeaderLine : header.getFormatHeaderLines()) {
+                    if (!oputputHeader.hasFormatLine(formatHeaderLine.getID())) {
+                        oputputHeader.addMetaDataLine(formatHeaderLine);
+                    }
                 }
 
                 // if (index == 0) {

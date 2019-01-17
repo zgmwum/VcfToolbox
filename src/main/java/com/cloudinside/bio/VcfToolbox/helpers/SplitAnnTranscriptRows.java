@@ -32,7 +32,7 @@ import com.google.common.base.Splitter;
 public class SplitAnnTranscriptRows {
 
     private static final String EFF_AA_NEW_NAME = "ANN____HGVS_P";
-    private static final String EFF_TRID = "ANN____HGVS_C";
+    private static final String EFF_TRID = "ANN____FEATUREID";
     private static final String EFF_AA = "ANN____HGVS_P";
     private static final String EFF_EFFECT = "ANN____EFFECT";
     private static final String EFF_IMPACT = "ANN____IMPACT";
@@ -195,12 +195,12 @@ public class SplitAnnTranscriptRows {
         public GenePointDescription() {
         }
 
-        public void addLine(String effect, String impact, String coding, String aa, String trid// ,
-                                                                                               // String
-                                                                                               // lof,
-                                                                                               // String
-                                                                                               // nmd
-        ) {
+        // ,
+        // String
+        // lof,
+        // String
+        // nmd
+        public void addLine(String effect, String impact, String coding, String aa, String trid) {
             effectSet.add(effect);
             impactSet.add(impact);
             codingSet.add(coding);
