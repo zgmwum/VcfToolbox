@@ -134,8 +134,9 @@ public class JoinVariants {
                             VCFHeaderLineType.Float, "frequency of files supporting this"));
                     oputputHeader.addMetaDataLine(new VCFInfoHeaderLine(ZGM_VCF_SUPPORTING_ANALYZED, 1,
                             VCFHeaderLineType.Integer, "number of vcf files analyzed"));
-                    oputputHeader.addMetaDataLine(new VCFInfoHeaderLine(ZGM_VCF_SUPPORTING_SOURCES, 1,
-                            VCFHeaderLineType.String, "vcfs supporting this observation"));
+                    oputputHeader.addMetaDataLine(
+                            new VCFInfoHeaderLine(ZGM_VCF_SUPPORTING_SOURCES, VCFHeaderLineCount.UNBOUNDED,
+                                    VCFHeaderLineType.String, "vcfs supporting this observation"));
                 }
 
                 for (VCFInfoHeaderLine infoHeaderLine : header.getInfoHeaderLines()) {
