@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,13 +18,14 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
-import com.cloudinside.bio.utils.NaturalOrderComparator;
-import com.google.common.collect.ComparisonChain;
 
+import htsjdk.samtools.reference.ReferenceSequenceFile;
+import htsjdk.samtools.reference.ReferenceSequenceFileFactory;
 import htsjdk.samtools.util.CloseableIterator;
 import htsjdk.variant.variantcontext.Genotype;
 import htsjdk.variant.variantcontext.VariantContext;
 import htsjdk.variant.variantcontext.VariantContextBuilder;
+import htsjdk.variant.variantcontext.VariantContextComparator;
 import htsjdk.variant.variantcontext.writer.Options;
 import htsjdk.variant.variantcontext.writer.VariantContextWriter;
 import htsjdk.variant.variantcontext.writer.VariantContextWriterFactory;
@@ -63,7 +63,8 @@ public class JoinVariants {
     private List<String> inputVcfFiles;
     @Parameter(names = "--prefixes", description = "Prefixes of vcfs, must be equal in size as --input", required = true)
     private List<String> inputPrefixes;
-
+    @Parameter(names = "--ref", description = "Reference, used only for sequence dictionary", required = true)
+    private String referenceFile;
     @Parameter(names = "--output", description = "Vcf output", required = true)
     private String outputVcfFile;
     @Parameter(names = "--ignore-missing-header", description = "Ingore missing header", required = false)
@@ -174,6 +175,18 @@ public class JoinVariants {
 
         vcfWriter.writeHeader(oputputHeader);
 
+        ReferenceSequenceFile referenceSequenceFile = ReferenceSequenceFileFactory
+                .getReferenceSequenceFile(new File(referenceFile));
+
+        VariantContextComparator variantContextComparator = new VariantContextComparator(
+                referenceSequenceFile.getSequenceDictionary());
+        try {
+            referenceSequenceFile.close();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
         int counter = 0;
         boolean done = false;
         while (!done) {
@@ -183,7 +196,7 @@ public class JoinVariants {
                 if (smallest == null) {
                     smallest = it.peek();
                 } else {
-                    if (comparator.compare(smallest, it.peek()) > 0) {
+                    if (variantContextComparator.compare(smallest, it.peek()) > 0) {
                         smallest = it.peek();
                     }
                 }
@@ -206,7 +219,7 @@ public class JoinVariants {
                 int index = 0;
                 List<String> prefixes = new ArrayList<>();
                 for (VcfIteratorWrapper it : readerIterators) {
-                    if (comparator.compare(smallest, it.peek()) == 0) {
+                    if (variantContextComparator.compare(smallest, it.peek()) == 0) {
                         VariantContext itvc = it.pop();
                         for (Entry<String, Object> attribute : itvc.getAttributes().entrySet()) {
                             vcb.attribute(inputPrefixes.get(index) + attribute.getKey(), attribute.getValue());
@@ -325,27 +338,5 @@ public class JoinVariants {
             iterator.close();
         }
     }
-
-    private final NaturalOrderComparator naturalOrderComparator = new NaturalOrderComparator();
-
-    private Comparator<VariantContext> comparator = new Comparator<VariantContext>() {
-
-        @Override
-        public int compare(VariantContext o1, VariantContext o2) {
-            if (o1 == null && o2 != null) {
-                return 1;
-            } else if (o1 != null && o2 == null) {
-                return -1;
-            } else if (o1 == null && o2 == null) {
-                return 0;
-            } else {
-                return ComparisonChain.start().compare(o1.getChr(), o2.getChr(), naturalOrderComparator)
-                        .compare(o1.getStart(), o2.getStart())
-                        .compare(o1.getReference().getBaseString(), o2.getReference().getBaseString())
-                        .compare(o1.getAlleles().get(1).getBaseString(), o2.getAlleles().get(1).getBaseString())
-                        .result();
-            }
-        }
-    };
 
 }
