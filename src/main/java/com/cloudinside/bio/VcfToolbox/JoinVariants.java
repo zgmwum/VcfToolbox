@@ -196,7 +196,7 @@ public class JoinVariants {
                 if (smallest == null) {
                     smallest = it.peek();
                 } else {
-                    if (variantContextComparator.compare(smallest, it.peek()) > 0) {
+                    if (it.peek() != null && variantContextComparator.compare(smallest, it.peek()) > 0) {
                         smallest = it.peek();
                     }
                 }
@@ -219,7 +219,7 @@ public class JoinVariants {
                 int index = 0;
                 List<String> prefixes = new ArrayList<>();
                 for (VcfIteratorWrapper it : readerIterators) {
-                    if (variantContextComparator.compare(smallest, it.peek()) == 0) {
+                    if (it.peek() != null && variantContextComparator.compare(smallest, it.peek()) == 0) {
                         VariantContext itvc = it.pop();
                         for (Entry<String, Object> attribute : itvc.getAttributes().entrySet()) {
                             vcb.attribute(inputPrefixes.get(index) + attribute.getKey(), attribute.getValue());
