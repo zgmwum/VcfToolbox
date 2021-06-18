@@ -178,8 +178,9 @@ public class JoinVariants {
         ReferenceSequenceFile referenceSequenceFile = ReferenceSequenceFileFactory
                 .getReferenceSequenceFile(new File(referenceFile));
 
-        VariantContextComparator variantContextComparator = new VariantContextComparator(
-                referenceSequenceFile.getSequenceDictionary());
+        VariantContextComparatorAltAware variantContextComparator = new VariantContextComparatorAltAware(
+                new VariantContextComparator(referenceSequenceFile.getSequenceDictionary()));
+
         try {
             referenceSequenceFile.close();
         } catch (IOException e) {
