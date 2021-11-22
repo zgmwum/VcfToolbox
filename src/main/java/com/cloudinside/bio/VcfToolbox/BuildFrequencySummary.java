@@ -27,8 +27,9 @@ import htsjdk.variant.variantcontext.GenotypesContext;
 import htsjdk.variant.variantcontext.VariantContext;
 import htsjdk.variant.variantcontext.VariantContextBuilder;
 import htsjdk.variant.variantcontext.writer.Options;
+import htsjdk.variant.variantcontext.writer.SortingVariantContextWriter;
 import htsjdk.variant.variantcontext.writer.VariantContextWriter;
-import htsjdk.variant.variantcontext.writer.VariantContextWriterFactory;
+import htsjdk.variant.variantcontext.writer.VariantContextWriterBuilder;
 import htsjdk.variant.vcf.VCFFileReader;
 import htsjdk.variant.vcf.VCFHeader;
 import htsjdk.variant.vcf.VCFHeaderLine;
@@ -57,14 +58,17 @@ public class BuildFrequencySummary {
 
     @Parameter(names = "--input", description = "Vcf input file (can be bgzipped, may need to indexed through tabix)", required = true)
     private String inputVcfFile;
-    @Parameter(names = "--prefix", description = "Prefix of info entries", required = true)
-    private String infoPrefix;
+    @Parameter(names = "--prefix", description = "Prefix of info entries", required = false)
+    private String infoPrefix = "ZGM_";
     @Parameter(names = "--output", description = "Vcf output", required = true)
     private String outputVcfFile;
     @Parameter(names = "--ignore-missing-header", description = "Ingore missing header", required = false)
     private boolean ignoreMissingHeader = false;
-    @Parameter(names = "--ignore-input-index", description = "Require index of input", required = false)
-    private boolean ignoreInputIndex = false;
+    @Parameter(names = "--normalize", description = "Normalize alleles, usually not needed", required = false)
+    private boolean normalize = false;
+    // @Parameter(names = "--ignore-input-index", description = "Require index
+    // of input", required = false)
+    private boolean ignoreInputIndex = true;
 
     public static void main(String[] args) {
         // to have Double formatted correctly
@@ -85,7 +89,6 @@ public class BuildFrequencySummary {
 
     private void go() {
 
-        // TODO Auto-generated method stub
         String filename = inputVcfFile; // "/archive/pio/tmp/merged_bcf.changed.vcf.gz";
         File file = new File(filename);
 
@@ -95,8 +98,12 @@ public class BuildFrequencySummary {
 
         final EnumSet<Options> options = ignoreInputIndex ? EnumSet.of(Options.INDEX_ON_THE_FLY)
                 : EnumSet.noneOf(Options.class);
-        final VariantContextWriter vcfWriter = VariantContextWriterFactory.sortOnTheFly(
-                VariantContextWriterFactory.create(new File(outputVcfFile), header.getSequenceDictionary(), options),
+
+        options.add(Options.USE_ASYNC_IO);
+
+        final VariantContextWriter vcfWriter = new SortingVariantContextWriter(
+                new VariantContextWriterBuilder().setOptions(options).setOutputFile(new File(outputVcfFile))
+                        .setReferenceDictionary(header.getSequenceDictionary()).build(),
                 10000);
 
         Set<VCFHeaderLine> set = Collections.emptySet();
@@ -178,24 +185,21 @@ public class BuildFrequencySummary {
                         vcb.attribute(infoPrefix + ALLELE_FREQUENCY_INFO,
                                 (double) genotypes.size() / (referenceCount + genotypes.size()));
 
-                        // normalize alleles: AAT->AATAA shall become: T->TAA
                         int position = vc.getStart();
                         String refSequence = oryginalReference.getBaseString();
                         String alleleSequence = allele.getBaseString();
+                        if (normalize) {
 
-                        int prefixOffset = countPrefixOffset(refSequence, alleleSequence);
-                        refSequence = refSequence.substring(prefixOffset);
-                        alleleSequence = alleleSequence.substring(prefixOffset);
+                            int prefixOffset = countPrefixOffset(refSequence, alleleSequence);
+                            refSequence = refSequence.substring(prefixOffset);
+                            alleleSequence = alleleSequence.substring(prefixOffset);
 
-                        int suffixOffset = countSuffixOffset(refSequence, alleleSequence);
-                        refSequence = refSequence.substring(0, refSequence.length() - suffixOffset);
-                        alleleSequence = alleleSequence.substring(0, alleleSequence.length() - suffixOffset);
+                            int suffixOffset = countSuffixOffset(refSequence, alleleSequence);
+                            refSequence = refSequence.substring(0, refSequence.length() - suffixOffset);
+                            alleleSequence = alleleSequence.substring(0, alleleSequence.length() - suffixOffset);
 
-                        position += prefixOffset;
-
-                        // if (prefixOffset != 0 || suffixOffset != 0) {
-                        // System.err.println("here");
-                        // }
+                            position += prefixOffset;
+                        }
 
                         vcb.start(position).alleles(refSequence, alleleSequence);
                         vcb.noGenotypes().noID();
