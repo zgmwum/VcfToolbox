@@ -27,7 +27,6 @@ import htsjdk.variant.variantcontext.GenotypesContext;
 import htsjdk.variant.variantcontext.VariantContext;
 import htsjdk.variant.variantcontext.VariantContextBuilder;
 import htsjdk.variant.variantcontext.writer.Options;
-import htsjdk.variant.variantcontext.writer.SortingVariantContextWriter;
 import htsjdk.variant.variantcontext.writer.VariantContextWriter;
 import htsjdk.variant.variantcontext.writer.VariantContextWriterBuilder;
 import htsjdk.variant.vcf.VCFFileReader;
@@ -101,10 +100,8 @@ public class BuildFrequencySummary {
 
         options.add(Options.USE_ASYNC_IO);
 
-        final VariantContextWriter vcfWriter = new SortingVariantContextWriter(
-                new VariantContextWriterBuilder().setOptions(options).setOutputFile(new File(outputVcfFile))
-                        .setReferenceDictionary(header.getSequenceDictionary()).build(),
-                10000);
+        final VariantContextWriter vcfWriter = new VariantContextWriterBuilder().setOptions(options)
+                .setOutputFile(new File(outputVcfFile)).setReferenceDictionary(header.getSequenceDictionary()).build();
 
         Set<VCFHeaderLine> set = Collections.emptySet();
         List<String> list = Collections.emptyList();
@@ -142,7 +139,7 @@ public class BuildFrequencySummary {
                     int referenceCount = 0;
 
                     // System.out.println(vc);
-                    String chr = vc.getChr();
+                    String chr = vc.getContig();
                     Allele oryginalReference = vc.getReference();
                     Set<String> sampleNames = vc.getSampleNames();
                     int allSamplesCount = sampleNames.size();
