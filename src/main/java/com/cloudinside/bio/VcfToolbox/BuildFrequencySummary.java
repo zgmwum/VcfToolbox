@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
@@ -53,6 +54,8 @@ public class BuildFrequencySummary {
     private static final String SAMPLES_CONTAINING_INFO = "SampCont";
     private static final String SAMPLES_CONTAINING_FREQUENCY_INFO = "SampFreq";
     private static final String SAMPLES_INFO = "Samples";
+    private static final String SAMPLES_HOM = "SamplesHom";
+    private static final String SAMPLES_HET = "SamplesHet";
     private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(BuildFrequencySummary.class);
 
     @Parameter(names = "--input", description = "Vcf input file (can be bgzipped, may need to indexed through tabix)", required = true)
@@ -109,6 +112,11 @@ public class BuildFrequencySummary {
 
         vcfHeader.addMetaDataLine(new VCFInfoHeaderLine(infoPrefix + ALL_ALLELES_COUNT_INFO, 1,
                 VCFHeaderLineType.Integer, "Total number of observations at this position"));
+        vcfHeader.addMetaDataLine(new VCFInfoHeaderLine(infoPrefix + SAMPLES_HOM, 1, VCFHeaderLineType.Integer,
+                "Number of samples with homozygote alt"));
+        vcfHeader.addMetaDataLine(new VCFInfoHeaderLine(infoPrefix + SAMPLES_HET, 1, VCFHeaderLineType.Integer,
+                "Number of samples with het alt"));
+
         vcfHeader.addMetaDataLine(new VCFInfoHeaderLine(infoPrefix + ALLELE_FREQUENCY_INFO, 1, VCFHeaderLineType.Float,
                 "Current allele frequency divided by number of observations"));
         vcfHeader.addMetaDataLine(new VCFInfoHeaderLine(infoPrefix + REFERENCE_NUMBER_INFO, 1,
@@ -170,11 +178,27 @@ public class BuildFrequencySummary {
                         vcb.attribute(infoPrefix + ALL_ALLELES_COUNT_INFO, referenceCount + genotypes.size());
 
                         Set<String> samplesList = new TreeSet<>();
+                        Set<String> homSamples = new TreeSet<>();
+                        Set<String> hetSamples = new TreeSet<>();
+
                         for (Genotype g : genotypes) {
-                            samplesList.add(g.getSampleName());
+                            String name = g.getSampleName();
+                            name = StringUtils.removeStart(name, "Sample_");
+                            name = StringUtils.substringBefore(name, ".");
+
+                            if (g.isHomVar()) {
+                                homSamples.add(name);
+                                name += "*";// append * to homozygotes
+                            } else if (g.isHet()) {
+                                hetSamples.add(name);
+                            }
+
+                            samplesList.add(name);
                         }
                         vcb.attribute(infoPrefix + SAMPLES_INFO, Joiner.on(',').join(samplesList));
                         vcb.attribute(infoPrefix + SAMPLES_COUNT_INFO, allSamplesCount);
+                        vcb.attribute(infoPrefix + SAMPLES_HOM, homSamples.size());
+                        vcb.attribute(infoPrefix + SAMPLES_HET, hetSamples.size());
                         vcb.attribute(infoPrefix + SAMPLES_CONTAINING_INFO, samplesList.size());
                         vcb.attribute(infoPrefix + SAMPLES_CONTAINING_FREQUENCY_INFO,
                                 (double) samplesList.size() / allSamplesCount);
