@@ -1,5 +1,5 @@
 # mvn clean compile package docker:build && docker push glosbe/wordlist
-NAME=genebeam/vcftoolbox
+NAME=quay.io/genebeam/vcftoolbox
 
 mvn clean package assembly:single
 
