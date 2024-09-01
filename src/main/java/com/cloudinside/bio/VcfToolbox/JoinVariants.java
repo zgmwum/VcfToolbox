@@ -28,7 +28,7 @@ import htsjdk.variant.variantcontext.VariantContextBuilder;
 import htsjdk.variant.variantcontext.VariantContextComparator;
 import htsjdk.variant.variantcontext.writer.Options;
 import htsjdk.variant.variantcontext.writer.VariantContextWriter;
-import htsjdk.variant.variantcontext.writer.VariantContextWriterFactory;
+import htsjdk.variant.variantcontext.writer.VariantContextWriterBuilder;
 import htsjdk.variant.vcf.VCFFileReader;
 import htsjdk.variant.vcf.VCFFilterHeaderLine;
 import htsjdk.variant.vcf.VCFFormatHeaderLine;
@@ -41,13 +41,13 @@ import htsjdk.variant.vcf.VCFInfoHeaderLine;
 /**
  * Vcf files must be in single obs form (no observations X,Y) sorted by
  * chromosome(alphanumeric)/position/ref/obs
- * 
+ *
  * <pre>
  * sort -k1,1V -k2,2n -k4,4 -k5,5
  * </pre>
- * 
+ *
  * @author pstawinski
- * 
+ *
  */
 public class JoinVariants {
     private static final String ZGM_HASH_INFO_NAME = "ZgmHash";
@@ -115,8 +115,9 @@ public class JoinVariants {
                 readerIterators.add(new VcfIteratorWrapper(it));
 
                 if (vcfWriter == null) {
-                    vcfWriter = VariantContextWriterFactory.create(new File(outputVcfFile),
-                            header.getSequenceDictionary(), options);
+                    vcfWriter = new VariantContextWriterBuilder().setOptions(options)
+                            .setOutputFile(new File(outputVcfFile))
+                            .setReferenceDictionary(header.getSequenceDictionary()).build();
 
                 }
 
@@ -244,41 +245,6 @@ public class JoinVariants {
                 vcfWriter.add(outputVc);
 
             }
-
-            // VariantContext vc = it.next();
-            // Allele oryginalReference = vc.getReference();
-            //
-            // for (Allele obs : vc.getAlternateAlleles()) {
-            // VariantContextBuilder vcb = new VariantContextBuilder(vc);
-            //
-            // vc.getCommonInfo().putAttribute(
-            // ZGM_HASH_INFO_NAME,
-            // VariantHashCounter.hash(vc.getChr(), vc.getStart(), vc.getEnd(),
-            // vc.getReference()
-            // .getBaseString(), vc.getAlternateAllele(0).getBaseString()));
-            //
-            // int position = vc.getStart();
-            // String refSequence = oryginalReference.getBaseString();
-            // String alleleSequence = obs.getBaseString();
-            // int prefixOffset = countPrefixOffset(refSequence,
-            // alleleSequence);
-            // refSequence = refSequence.substring(prefixOffset);
-            // alleleSequence = alleleSequence.substring(prefixOffset);
-            // int suffixOffset = countSuffixOffset(refSequence,
-            // alleleSequence);
-            // refSequence = refSequence.substring(0, refSequence.length() -
-            // suffixOffset);
-            // alleleSequence = alleleSequence.substring(0,
-            // alleleSequence.length() - suffixOffset);
-            //
-            // position += prefixOffset;
-            //
-            // vcb.start(position).alleles(refSequence, alleleSequence);
-            // vcb.computeEndFromAlleles(vcb.getAlleles(), position);
-            //
-            // VariantContext outputVc = vcb.make();
-            // vcfWriter.add(outputVc);
-            // }
 
             if (++counter % 10000 == 0) {
                 System.err.println("Processed " + counter);
