@@ -23,6 +23,7 @@ import htsjdk.samtools.reference.ReferenceSequenceFile;
 import htsjdk.samtools.reference.ReferenceSequenceFileFactory;
 import htsjdk.samtools.util.CloseableIterator;
 import htsjdk.variant.variantcontext.Genotype;
+import htsjdk.variant.variantcontext.GenotypeBuilder;
 import htsjdk.variant.variantcontext.VariantContext;
 import htsjdk.variant.variantcontext.VariantContextBuilder;
 import htsjdk.variant.variantcontext.VariantContextComparator;
@@ -103,6 +104,7 @@ public class JoinVariants {
 
         VCFHeader oputputHeader = null;
 
+        String sampleName = null;
         List<VcfIteratorWrapper> readerIterators = new ArrayList<>();
         {
             int index = 0;
@@ -139,6 +141,8 @@ public class JoinVariants {
                     oputputHeader.addMetaDataLine(
                             new VCFInfoHeaderLine(ZGM_VCF_SUPPORTING_SOURCES, VCFHeaderLineCount.UNBOUNDED,
                                     VCFHeaderLineType.String, "vcfs supporting this observation"));
+
+                    sampleName = header.getSampleNamesInOrder().get(0);
                 }
 
                 for (VCFInfoHeaderLine infoHeaderLine : header.getInfoHeaderLines()) {
@@ -234,13 +238,19 @@ public class JoinVariants {
 
                 }
                 Genotype genotype = vc.getGenotypes().get(0);
-                vcb.genotypes(genotype);
+                GenotypeBuilder modifiedGenotype = new GenotypeBuilder(genotype).name(sampleName);
+
+                vcb.genotypes(modifiedGenotype.make());
                 vcb.attribute(ZGM_VCF_SUPPORTING_ANALYZED, inputPrefixes.size());
                 vcb.attribute(ZGM_VCF_SUPPORTING_NUM, count);
                 vcb.attribute(ZGM_VCF_SUPPORTING_FREQ, (double) count / (double) inputPrefixes.size());
                 vcb.attribute(ZGM_VCF_SUPPORTING_SOURCES, StringUtils.join(prefixes, ','));
 
                 VariantContext outputVc = vcb.make();
+
+                // remove me
+                // vcfWriter.add(vc);
+                // eo remove me
 
                 vcfWriter.add(outputVc);
 
