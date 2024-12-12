@@ -143,6 +143,11 @@ public class JoinVariants {
                                     VCFHeaderLineType.String, "vcfs supporting this observation"));
 
                     sampleName = header.getSampleNamesInOrder().get(0);
+                } else {
+                    if (!sampleName.equals(header.getSampleNamesInOrder().get(0))) {
+                        log.warn("Sample name differs: " + sampleName + " != " + header.getSampleNamesInOrder().get(0)
+                                + "; this is probably not a problem, but be warned");
+                    }
                 }
 
                 for (VCFInfoHeaderLine infoHeaderLine : header.getInfoHeaderLines()) {
